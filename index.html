@@ -14,7 +14,8 @@
         background: #003366; font-family: sans-serif;
       }
       
-      #splash-screen {
+      /* Common Fullscreen Overlay Style */
+      .overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: #003366; 
         color: white;
@@ -33,21 +34,38 @@
       }
       button:hover { background: white; color: #003366; }
 
-      iframe { width: 100%; height: 100%; border: none; }
+      /* Loader Spinner */
+      .loader { display: none; }
+      .spinner {
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #ffcc00; /* SDO Gold Accent */
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+      iframe { width: 100%; height: 100%; border: none; display: none; }
     </style>
   </head>
   <body>
 
-    <div id="splash-screen">
+    <div id="splash-screen" class="overlay">
       <div style="text-align: center;">
         <h1>SDO Biñan City</h1>
         <p>Employee Attendance Monitoring System</p>
-        
         <div class="btn-container">
           <button onclick="launchApp('kiosk')">Kiosk Mode</button>
           <button onclick="launchApp('admin')">Admin Dashboard</button>
         </div>
       </div>
+    </div>
+
+    <div id="loader" class="loader overlay">
+      <div class="spinner"></div>
+      <h2>Loading...</h2>
     </div>
 
     <iframe id="appFrame" title="Attendance System"></iframe>
@@ -57,19 +75,25 @@
         const baseUrl = "https://script.google.com/macros/s/AKfycbwxhcX3i4Iem2rOW3Hbdi1rfRp6246FNbwruYpm8UTucwJ5892CIn6MKhyZ8DU-iEe2/exec";
         const frame = document.getElementById("appFrame");
         const splash = document.getElementById("splash-screen");
+        const loader = document.getElementById("loader");
         
-        // 1. Set URL based on selection
-        if (mode === 'admin') {
-          frame.src = baseUrl + "?page=admin";
-        } else {
-          frame.src = baseUrl;
-        }
+        // 1. Set Source
+        frame.src = (mode === 'admin') ? baseUrl + "?page=admin" : baseUrl;
         
-        // 2. Hide Splash
+        // 2. Hide Splash, Show Loader
         splash.style.opacity = '0';
-        setTimeout(() => { splash.style.display = 'none'; }, 500);
+        setTimeout(() => { 
+            splash.style.display = 'none'; 
+            loader.style.display = 'flex'; // Show loading screen
+        }, 500);
         
-        // 3. Fullscreen
+        // 3. When Iframe finishes loading, hide loader
+        frame.onload = function() {
+            loader.style.display = 'none';
+            frame.style.display = 'block'; // Show the actual app
+        };
+        
+        // 4. Request Fullscreen
         const elem = document.documentElement;
         if (elem.requestFullscreen) {
           elem.requestFullscreen().catch((err) => console.warn(err.message));

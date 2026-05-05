@@ -7,9 +7,9 @@
   "theme_color": "#003366",
   "icons": [
     {
-      "src": "Lsb.jpg",
+      "src": "time.png",
       "sizes": "192x192",
-      "type": "image/jpg"
+      "type": "image/png"
     }
   ]
 }

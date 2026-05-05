@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDO Biñan City Attendance Monitoring</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="Lsb.jpg" type="image/jpg">
+    <link rel="apple-touch-icon" href="Lsb.jpg">
+
+    <style>
+      body, html { 
+        margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+        background: #003366; font-family: sans-serif;
+      }
+      
+      #splash-screen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: #003366; 
+        color: white;
+        display: flex; flex-direction: column; 
+        align-items: center; justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease;
+      }
+
+      .btn-container { margin-top: 20px; display: flex; gap: 20px; }
+      
+      button {
+        padding: 15px 30px; font-size: 18px; cursor: pointer;
+        border: 2px solid white; background: transparent; color: white;
+        border-radius: 8px; font-weight: bold;
+      }
+      button:hover { background: white; color: #003366; }
+
+      iframe { width: 100%; height: 100%; border: none; }
+    </style>
+  </head>
+  <body>
+
+    <div id="splash-screen">
+      <div style="text-align: center;">
+        <h1>SDO Biñan City</h1>
+        <p>Employee Attendance Monitoring System</p>
+        
+        <div class="btn-container">
+          <button onclick="launchApp('kiosk')">Kiosk Mode</button>
+          <button onclick="launchApp('admin')">Admin Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+    <iframe id="appFrame" title="Attendance System"></iframe>
+
+    <script>
+      function launchApp(mode) {
+        const baseUrl = "https://script.google.com/macros/s/AKfycbzbTJkjPexVoIpbRes_5dzYGiwAeBc-ioN3YKIW_IvkdoB0vCsErGe0MdHnvY2EFhaq/exec";
+        const frame = document.getElementById("appFrame");
+        const splash = document.getElementById("splash-screen");
+        
+        // 1. Set URL based on selection
+        if (mode === 'admin') {
+          frame.src = baseUrl + "?page=admin";
+        } else {
+          frame.src = baseUrl;
+        }
+        
+        // 2. Hide Splash
+        splash.style.opacity = '0';
+        setTimeout(() => { splash.style.display = 'none'; }, 500);
+        
+        // 3. Fullscreen
+        const elem = document.documentElement;
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen().catch((err) => console.warn(err.message));
+        }
+      }
+    </script>
+  </body>
+</html>
